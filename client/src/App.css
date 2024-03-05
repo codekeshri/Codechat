@@ -1,0 +1,79 @@
+.main{
+    background: #4C4C4C;
+    height: 100vh;
+
+}
+
+.editor {
+    background: #4C4C4C;
+    height: 100vh;
+    width: 100%;
+    float: left;
+  }
+  .chat {
+        background-color: #D3D3D3;
+        height: 100vh;
+        width: 33%;
+        float: right;
+        position: relative;
+  }
+  
+  .small {
+    width: 66.66%; /* 2/3rds of the screen */
+  }
+  
+  .full {
+    width: 100%;
+  }
+
+  .toggle-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    z-index: 999;
+  }
+  
+
+  .input {
+    position: absolute;
+    margin-right: 4px;
+    width: 95%;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    z-index: 999;
+  }
+
+  .send{
+    margin-left: 5px;
+  }
+  
+  .CodeMirror {
+    height: 100vh;
+  }
+
+  .login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to right, #fff 50%, #D3D3D3 50%);
+}
+.logo{
+    vertical-align: middle;
+}
+
+.form {
+    /* margin-top: 3%; */
+    margin-left: 200px;
+    width: 300px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.messages {
+  margin-left: 0%;
+  list-style-type: none;
+}
+
