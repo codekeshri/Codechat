@@ -2,16 +2,21 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const path = require("path");
+const bodyParser = require("body-parser");
 const {Server} = require("socket.io");
 const ACTIONS = require("./Actions");
 const cors = require("cors");
+const {connectToMongoDB} = require("./util/mongoose");
+const Message = require("./models/message");
+const chatRoutes = require("./controllers/message");
 
 const server = http.createServer(app);
 const io = new Server(server);
 const userSocketMap = {};
 
+app.use(bodyParser.json());
 app.use(cors());
-
+app.use("/chat", chatRoutes);
 io.on("connection", (socket) => {
   console.log("socket started running");
   socket.on(ACTIONS.JOIN, (data) => {
@@ -54,16 +59,22 @@ io.on("connection", (socket) => {
 
   socket.on("send-message", (data) => {
     console.log(data);
-    io.emit("receive-message", (data) => {
-      console.log("message recieved");
-    });
+    io.emit("receive-message", data);
   });
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`listening to port ${PORT}`);
-});
+// const PORT = "http://65.0.101.178/";
+
+connectToMongoDB()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`listening to port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB connection Error", err);
+  });
 
 function getAllCoders(newIDE) {
   return Array.from(io.sockets.adapter.rooms.get(newIDE) || []).map(
