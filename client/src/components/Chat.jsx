@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { initSocket } from '../socket';
-import ReactScrollToBottom from 'react-scroll-to-bottom';
-// import Message from './Message';
 import axios from 'axios';
 
 const Chat = ({ username }) => {
@@ -16,7 +14,11 @@ const Chat = ({ username }) => {
       setSocket(newSocket);
 
       newSocket.on('receive-message', (data) => {
-        setMessages((prevMessages)=>[...prevMessages, data]);
+        setMessages((prevMessages)=>{
+         const updatedMessages =  [...prevMessages, data];
+        return updatedMessages;
+        })
+        
       });
 
       return () => {
@@ -26,26 +28,34 @@ const Chat = ({ username }) => {
     };
 
     setupSocket();
-
-    // Cleanup function
-    return () => {
+    
+    return () => {                                 // Cleanup function
       if (socket) {
         socket.disconnect();
         console.log('Socket disconnected');
       }
     };
-  }, []); // Empty dependency array means this effect runs only once
+  }, []);                                          // Empty dependency array means this effect runs only once 
+
 
   const send = async() => {
     try{
       const newMessage = inputRef.current.value;
-      await axios.post('http://localhost:3000/chat/send', {username, newMessage});
-      console.log('message sent successfully', username, newMessage)
 
       if (socket && newMessage.trim() !=="") {
 
           const data = {message: newMessage, user: username};
 
+          console.log('pre axios', data)
+
+
+          const res = await axios.post('http://localhost:3000/chat/send', data);
+          console.log(res);
+          
+
+
+          console.log('axios post req successful')
+          
           socket.emit('send-message', data);
           
           inputRef.current.value = '';
@@ -56,17 +66,11 @@ const Chat = ({ username }) => {
     }
   };
 
-  console.log('Rendering with messages:', messages);
 
   return (
     <> 
       <div className='chat-container' >
-        {/* <ReactScrollToBottom className='chat' smoothScroll> */}
-        {/* {messages.map(({user, message}, index)=> (<Message key={index} data={{user: user, message: message}}/>))} */}
-        {messages.map(({user, message})=>{
-              return <><strong>{user}</strong> {message}<br /></>
-        })}
-        {/* </ReactScrollToBottom> */}
+        {messages.map(({user, message}, index)=>( <div key={index}><strong>{user}</strong> {message}<br /></div>))}
       </div>
       <div className="input">
         <input ref= {inputRef} type="text" className="form-control inputMessage" id="inputMessage" placeholder="Your message" />
@@ -78,3 +82,25 @@ const Chat = ({ username }) => {
 };
 
 export default Chat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          // await fetch('/chat/send', {
+          //   method: 'POST',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //   },
+          //   body: JSON.stringify(data),
+          // });

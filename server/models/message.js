@@ -1,11 +1,11 @@
-const mongoose = require("mongoose"); //table
+const mongoose = require("mongoose");
 
 const Codechat = new mongoose.Schema(
   {
     message: String,
     user: String,
   },
-  {timestamps: false} //disables createdat and updatedat
+  {timestamps: false}
 );
 
 const Message = mongoose.model("Message", Codechat);

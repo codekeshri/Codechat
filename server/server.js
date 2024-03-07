@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -7,7 +8,6 @@ const {Server} = require("socket.io");
 const ACTIONS = require("./Actions");
 const cors = require("cors");
 const {connectToMongoDB} = require("./util/mongoose");
-const Message = require("./models/message");
 const chatRoutes = require("./controllers/message");
 
 const server = http.createServer(app);
@@ -15,15 +15,28 @@ const io = new Server(server);
 const userSocketMap = {};
 
 app.use(bodyParser.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+const _dirname = path.dirname(__filename);
+const buildpath = path.join(_dirname, "../client/build");
+app.use(express.static(buildpath));
 app.use("/chat", chatRoutes);
+
 io.on("connection", (socket) => {
   console.log("socket started running");
   socket.on(ACTIONS.JOIN, (data) => {
     const {username, newIDE} = data;
     userSocketMap[socket.id] = username;
 
-    socket.join(newIDE); // this new user joins code room
+    socket.join(newIDE);
 
     const coders = getAllCoders(newIDE);
 
@@ -64,8 +77,6 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-// const PORT = "http://65.0.101.178/";
-
 connectToMongoDB()
   .then(() => {
     server.listen(PORT, () => {

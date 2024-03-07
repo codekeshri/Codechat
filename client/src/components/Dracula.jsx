@@ -10,7 +10,6 @@ import ACTIONS from '../Actions';
 const Dracula = ({ socketRef, roomId, onCodeChange }) => {
 
     const editorRef = useRef(null);
-    const panelRef = useRef(null);
 
     useEffect(() => {
         async function init() {

@@ -1,17 +1,16 @@
 const express = require("express");
 const Message = require("../models/message");
 const routes = express.Router();
-const path = require("path");
-const bodyParser = require("body-parser");
 // const AWS = require("aws-sdk");
 // AWS.config.update({region: "ap-south-1"});
-require("dotenv").config();
 
 routes.post("/send", async (req, res) => {
+  console.log("/chat/send route ok", req.body);
+
   try {
-    const {username, newMessage} = req.body;
-    const message = new Message({username, newMessage});
-    await message.save();
+    const {user, message} = req.body;
+    const newMessage = new Message({user, message});
+    await newMessage.save();
     res.status(201).json({message: "Message sent successfully"});
   } catch (err) {
     console.log(err);
